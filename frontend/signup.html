@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackwood - Создать аккаунт</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fab fa-blackwood"></i>
+                <span>Blackwood</span>
+            </div>
+            <div class="nav-buttons">
+                <a href="index.html" class="btn btn-login">На главную</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="signup-container">
+        <div class="signup-card">
+            <h1>Создать аккаунт</h1>
+            <p class="signup-subtitle">Присоединяйтесь к сообществу Blackwood</p>
+
+            <form id="signupForm" class="signup-form">
+                <div class="avatar-upload">
+                    <div class="avatar-preview">
+                        <img id="avatarPreview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=default" alt="Avatar Preview">
+                    </div>
+                    <div class="avatar-controls">
+                        <button type="button" class="btn btn-secondary" onclick="generateNewAvatar()">
+                            <i class="fas fa-random"></i> Сгенерировать
+                        </button>
+                        <label class="btn btn-secondary">
+                            <i class="fas fa-upload"></i> Загрузить
+                            <input type="file" accept="image/*" onchange="handleImageUpload(event)" hidden>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Имя пользователя</label>
+                    <div class="username-input">
+                        <span class="username-prefix">@</span>
+                        <input type="text" id="username" name="username" required placeholder="username">
+                    </div>
+                    <div class="validation-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="displayName">Отображаемое имя</label>
+                    <input type="text" id="displayName" name="displayName" required placeholder="Ваше имя">
+                    <div class="validation-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="validation-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <div class="password-input">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password')">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="strength-meter">
+                            <div class="strength-bar"></div>
+                        </div>
+                        <div class="strength-text">Сложность пароля: <span>Слабый</span></div>
+                    </div>
+                    <div class="validation-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Подтвердите пароль</label>
+                    <div class="password-input">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('confirmPassword')">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="validation-message"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Создать аккаунт</button>
+            </form>
+
+            <p class="login-link">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+        </div>
+    </main>
+
+    <style>
+    /* Добавьте эти стили в ваш CSS файл */
+    .username-input {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .username-prefix {
+        position: absolute;
+        left: 1rem;
+        color: var(--light-text);
+        font-weight: 500;
+    }
+
+    .username-input input {
+        padding-left: 2rem;
+    }
+
+    .username-input input::placeholder {
+        color: var(--light-text);
+        opacity: 0.7;
+    }
+    </style>
+
+    <script>
+        // Генерация нового аватара
+        function generateNewAvatar() {
+            const seed = Math.random().toString(36).substring(7);
+            document.getElementById('avatarPreview').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+        }
+
+        // Загрузка изображения
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Переключение видимости пароля
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Проверка сложности пароля
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            const feedback = [];
+
+            // Длина пароля
+            if (password.length >= 8) {
+                strength += 1;
+            } else {
+                feedback.push('Пароль должен содержать минимум 8 символов');
+            }
+
+            // Наличие цифр
+            if (/\d/.test(password)) {
+                strength += 1;
+            } else {
+                feedback.push('Добавьте цифры');
+            }
+
+            // Наличие заглавных букв
+            if (/[A-Z]/.test(password)) {
+                strength += 1;
+            } else {
+                feedback.push('Добавьте заглавные буквы');
+            }
+
+            // Наличие специальных символов
+            if (/[!@#$%^&*]/.test(password)) {
+                strength += 1;
+            } else {
+                feedback.push('Добавьте специальные символы (!@#$%^&*)');
+            }
+
+            return { strength, feedback };
+        }
+
+        // Обновление индикатора сложности пароля
+        function updatePasswordStrength(password) {
+            const { strength, feedback } = checkPasswordStrength(password);
+            const strengthBar = document.querySelector('.strength-bar');
+            const strengthText = document.querySelector('.strength-text span');
+            const validationMessage = document.querySelector('#password + .validation-message');
+
+            // Обновление полосы прогресса
+            strengthBar.style.width = `${(strength / 4) * 100}%`;
+            
+            // Обновление цвета и текста
+            if (strength <= 1) {
+                strengthBar.style.backgroundColor = '#ff4444';
+                strengthText.textContent = 'Слабый';
+            } else if (strength <= 2) {
+                strengthBar.style.backgroundColor = '#ffbb33';
+                strengthText.textContent = 'Средний';
+            } else if (strength <= 3) {
+                strengthBar.style.backgroundColor = '#00C851';
+                strengthText.textContent = 'Хороший';
+            } else {
+                strengthBar.style.backgroundColor = '#007E33';
+                strengthText.textContent = 'Отличный';
+            }
+
+            // Обновление сообщения валидации
+            validationMessage.textContent = feedback.join(', ');
+            validationMessage.style.color = strength <= 2 ? '#ff4444' : '#00C851';
+        }
+
+        // Обработка формы
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            if (!validateUsername(username)) {
+                document.querySelector('#username + .validation-message').textContent = 
+                    'Имя пользователя может содержать только буквы, цифры и подчеркивания';
+                return;
+            }
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                document.querySelector('#confirmPassword + .validation-message').textContent = 'Пароли не совпадают';
+                return;
+            }
+
+            const { strength } = checkPasswordStrength(password);
+            if (strength < 3) {
+                alert('Пожалуйста, используйте более сложный пароль');
+                return;
+            }
+
+            // Здесь будет отправка формы на сервер
+            alert('Аккаунт успешно создан!');
+        });
+
+        // Обработка ввода пароля
+        document.getElementById('password').addEventListener('input', function(e) {
+            updatePasswordStrength(e.target.value);
+        });
+
+        // Добавьте эту функцию в ваш JavaScript
+        function validateUsername(username) {
+            // Только буквы, цифры и подчеркивания
+            const usernameRegex = /^[a-zA-Z0-9_]+$/;
+            return usernameRegex.test(username);
+        }
+    </script>
+</body>
+</html> 

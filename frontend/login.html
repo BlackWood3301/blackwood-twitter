@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackwood - Вход</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/signup.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fab fa-blackwood"></i>
+                <span>Blackwood</span>
+            </div>
+            <div class="nav-buttons">
+                <a href="index.html" class="btn btn-login">На главную</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="signup-container">
+        <div class="signup-card">
+            <h1>Войти в аккаунт</h1>
+            <p class="signup-subtitle">С возвращением в Blackwood</p>
+
+            <form id="loginForm" class="signup-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="validation-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <div class="password-input">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('password')">
+                            <i class="far fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="validation-message"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block">Войти</button>
+            </form>
+
+            <p class="login-link">Нет аккаунта? <a href="signup.html">Зарегистрироваться</a></p>
+        </div>
+    </main>
+
+    <script>
+        // Переключение видимости пароля
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.nextElementSibling.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Обработка отправки формы
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:8000/user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Сохраняем токен
+                    localStorage.setItem('token', data.access_token);
+                    // Перенаправляем на главную
+                    window.location.href = 'index.html';
+                } else {
+                    // Показываем ошибку
+                    const validationMessage = document.querySelector('.validation-message');
+                    validationMessage.textContent = data.detail || 'Ошибка входа';
+                    validationMessage.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                const validationMessage = document.querySelector('.validation-message');
+                validationMessage.textContent = 'Ошибка сервера';
+                validationMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html> 

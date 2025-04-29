@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackwood - Присоединяйтесь к сообществу</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fab fa-blackwood"></i>
+                <span>Blackwood</span>
+            </div>
+            <div class="nav-buttons">
+                <a href="signup.html" class="btn btn-signup">Зарегистрироваться</a>
+                <a href="login.html" class="btn btn-login">Войти</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Добро пожаловать в Blackwood</h1>
+                <p class="hero-subtitle">Присоединяйтесь к сообществу, где ваши мысли имеют значение</p>
+                
+                <div class="features">
+                    <div class="feature">
+                        <i class="fas fa-users"></i>
+                        <h3>Сообщество</h3>
+                        <p>Общайтесь с единомышленниками и находите новых друзей</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Мгновенно</h3>
+                        <p>Делитесь мыслями и идеями в реальном времени</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-globe"></i>
+                        <h3>Глобально</h3>
+                        <p>Ваши сообщения могут достичь миллионов людей</p>
+                    </div>
+                </div>
+
+                <div class="cta-section">
+                    <h2>Готовы начать?</h2>
+                    <p>Создайте аккаунт прямо сейчас и присоединяйтесь к миллионам пользователей</p>
+                    <a href="signup.html" class="btn btn-primary">Создать аккаунт</a>
+                    <p class="login-link">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="preview-card">
+                    <div class="preview-header">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ivan" alt="User" class="avatar">
+                        <div class="preview-info">
+                            <h4>Иван Иванов</h4>
+                            <span>@ivan</span>
+                        </div>
+                    </div>
+                    <p class="preview-text">Только что присоединился к Blackwood! Здесь потрясающее сообщество и интересные обсуждения. #новыйпользователь</p>
+                    <div class="preview-stats">
+                        <span class="interactive-icon" onclick="toggleLike(this)">
+                            <i class="far fa-heart"></i>
+                            <span class="counter">42</span>
+                        </span>
+                        <span class="interactive-icon" onclick="toggleComment(this)">
+                            <i class="far fa-comment"></i>
+                            <span class="counter">12</span>
+                        </span>
+                        <span class="interactive-icon" onclick="toggleShare(this)">
+                            <i class="far fa-share-square"></i>
+                            <span class="counter">5</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="trending">
+        <h2>Популярные темы</h2>
+        <div class="trending-topics">
+            <div class="topic">
+                <span class="topic-category">Технологии</span>
+                <h3>#ИскусственныйИнтеллект</h3>
+                <p>2.5K постов</p>
+            </div>
+            <div class="topic">
+                <span class="topic-category">Бизнес</span>
+                <h3>#Стартапы2024</h3>
+                <p>1.8K постов</p>
+            </div>
+            <div class="topic">
+                <span class="topic-category">Наука</span>
+                <h3>#КосмическиеОткрытия</h3>
+                <p>3.2K постов</p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Blackwood</h3>
+                <p>© 2024 Blackwood, Inc.</p>
+            </div>
+            <div class="footer-links">
+                <a href="#">О нас</a>
+                <a href="#">Помощь</a>
+                <a href="#">Условия</a>
+                <a href="#">Конфиденциальность</a>
+                <a href="#">Файлы cookie</a>
+                <a href="#">Доступность</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleLike(element) {
+            const icon = element.querySelector('i');
+            const counter = element.querySelector('.counter');
+            const currentCount = parseInt(counter.textContent);
+            
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                counter.textContent = currentCount + 1;
+                element.style.color = '#e0245e';
+                element.classList.add('active');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                counter.textContent = currentCount - 1;
+                element.style.color = '';
+                element.classList.remove('active');
+            }
+            
+            // Добавляем анимацию для счетчика
+            counter.classList.add('updated');
+            setTimeout(() => {
+                counter.classList.remove('updated');
+            }, 300);
+        }
+
+        function toggleComment(element) {
+            const icon = element.querySelector('i');
+            const counter = element.querySelector('.counter');
+            const currentCount = parseInt(counter.textContent);
+            
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                counter.textContent = currentCount + 1;
+                element.style.color = '#1da1f2';
+                element.classList.add('active');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                counter.textContent = currentCount - 1;
+                element.style.color = '';
+                element.classList.remove('active');
+            }
+            
+            // Добавляем анимацию для счетчика
+            counter.classList.add('updated');
+            setTimeout(() => {
+                counter.classList.remove('updated');
+            }, 300);
+        }
+
+        function toggleShare(element) {
+            const icon = element.querySelector('i');
+            const counter = element.querySelector('.counter');
+            const currentCount = parseInt(counter.textContent);
+            
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                counter.textContent = currentCount + 1;
+                element.style.color = '#17bf63';
+                element.classList.add('active');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                counter.textContent = currentCount - 1;
+                element.style.color = '';
+                element.classList.remove('active');
+            }
+            
+            // Добавляем анимацию для счетчика
+            counter.classList.add('updated');
+            setTimeout(() => {
+                counter.classList.remove('updated');
+            }, 300);
+        }
+    </script>
+</body>
+</html> 
