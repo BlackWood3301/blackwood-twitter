@@ -1,8 +1,8 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 from sqlalchemy import String, DateTime
 from pydantic import EmailStr
-
+from typing import List
 
 
 class User(Base):
@@ -14,3 +14,6 @@ class User(Base):
     name: Mapped[str]
     email: Mapped[str]
     password: Mapped[str]
+    
+    # Добавляем отношение к постам
+    posts: Mapped[List["Post"]] = relationship("Post", back_populates="user")

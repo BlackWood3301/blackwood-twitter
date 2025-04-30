@@ -4,24 +4,334 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackwood - Лента</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/feed.css">
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <link rel="stylesheet" href="/static/styles/feed.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar sticky">
         <div class="nav-container">
             <div class="logo">
                 <i class="fab fa-blackwood"></i>
                 <span>Blackwood</span>
             </div>
             <div class="nav-buttons">
-                <a href="index.html" class="btn btn-secondary">Главная</a>
-                <a href="feed.html" class="btn btn-primary active">Лента</a>
-                <a href="login.html" class="btn btn-login">Войти</a>
+                <a href="/" class="btn btn-secondary">Главная</a>
+                <div class="user-menu" id="userMenu">
+                    <div class="user-avatar" id="userAvatar">
+                        <!-- Avatar will be set by JavaScript -->
+                    </div>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <a href="#" class="dropdown-item">Профиль</a>
+                        <a href="#" class="dropdown-item">Настройки</a>
+                        <a href="#" class="dropdown-item" id="logoutButton">Выйти</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
+
+    <style>
+    /* Улучшенный стиль для navbar и пользовательского меню */
+    .navbar {
+        padding: 10px 0;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+    }
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+    
+    .nav-buttons {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .user-menu {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .user-avatar {
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid #e0e0e0;
+        transition: all 0.2s ease;
+    }
+    
+    .user-avatar:hover {
+        border-color: #1da1f2;
+        transform: scale(1.05);
+    }
+    
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        min-width: 180px;
+        padding: 8px 0;
+        z-index: 100;
+        display: none;
+        margin-top: 5px;
+    }
+    
+    .dropdown-item {
+        display: block;
+        padding: 10px 15px;
+        color: #333;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+        color: #1da1f2;
+    }
+    
+    #logoutButton {
+        color: #e74c3c;
+        border-top: 1px solid #eee;
+        margin-top: 5px;
+        padding-top: 10px;
+    }
+    
+    #logoutButton:hover {
+        background-color: #fff8f8;
+    }
+    
+    /* Стили для основного контента */
+    .feed-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 20px;
+        padding: 0 20px;
+    }
+    
+    .sidebar {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 20px;
+        position: sticky;
+        top: 80px;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .compose-post {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 15px;
+        display: flex;
+        gap: 15px;
+    }
+    
+    .compose-post .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+    }
+    
+    .compose-input {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .compose-input textarea {
+        border: none;
+        resize: none;
+        padding: 10px 0;
+        font-size: 16px;
+        min-height: 60px;
+        margin-bottom: 10px;
+    }
+    
+    .compose-input textarea:focus {
+        outline: none;
+    }
+    
+    .compose-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 10px;
+    }
+    
+    .compose-tools {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .btn-icon {
+        background: transparent;
+        border: none;
+        color: #1da1f2;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50%;
+        transition: all 0.2s;
+    }
+    
+    .btn-icon:hover {
+        background-color: rgba(29, 161, 242, 0.1);
+    }
+    
+    .feed-tabs {
+        background: #fff;
+        border-radius: 12px;
+        display: flex;
+        overflow: hidden;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        padding: 15px;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .tab-btn.active {
+        border-bottom-color: #1da1f2;
+        color: #1da1f2;
+    }
+    
+    .posts-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .post {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 20px;
+    }
+    
+    .post-header {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .post-header .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+    }
+    
+    .post-info {
+        flex: 1;
+    }
+    
+    .post-user {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+    
+    .username {
+        color: #657786;
+        font-weight: normal;
+    }
+    
+    .post-time {
+        color: #657786;
+    }
+    
+    .post-text {
+        margin: 0;
+        line-height: 1.5;
+    }
+    
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .post-action {
+        background: transparent;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #657786;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 5px;
+        transition: all 0.2s;
+    }
+    
+    .post-action:hover {
+        background-color: rgba(29, 161, 242, 0.1);
+    }
+    
+    .action-count {
+        font-size: 0.9rem;
+    }
+    
+    /* Адаптивность для мобильных устройств */
+    @media (max-width: 768px) {
+        .feed-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .sidebar {
+            display: none;
+        }
+    }
+    </style>
 
     <div class="feed-container">
         <aside class="sidebar">
@@ -265,68 +575,452 @@
         </main>
     </div>
 
-    <script src="js/api.js"></script>
+    <script src="/static/js/api.js"></script>
     <script>
-        // Массив для хранения постов
-        let posts = JSON.parse(localStorage.getItem('posts')) || [];
+        // Получаем токен авторизации из localStorage или cookie
+        let token = localStorage.getItem('token');
         
-        // Функция для отображения всех постов
-        function displayPosts() {
-            const postsContainer = document.querySelector('.posts-container');
-            postsContainer.innerHTML = '';
+        // Если токен не найден в localStorage, попробуем получить из cookie
+        if (!token) {
+            const cookies = document.cookie.split(';');
             
-            // Сортировка постов по времени (новые сверху)
-            posts.sort((a, b) => b.timestamp - a.timestamp);
-            
-            posts.forEach(post => {
-                const postElement = createPostElement(post);
-                postsContainer.appendChild(postElement);
-            });
+            for(let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('token=')) {
+                    token = cookie.substring('token='.length, cookie.length);
+                    console.log('Инициализация: найден токен в cookie:', token);
+                    
+                    // Сохраним токен в localStorage для будущих запросов
+                    localStorage.setItem('token', token);
+                    break;
+                }
+            }
         }
         
-        // Функция для создания элемента поста
+        // Проверка авторизации
+        async function checkAuth() {
+            try {
+                // Получаем токен из localStorage или cookie
+                let authToken = token;
+                
+                // Если токен не найден в localStorage, попробуем получить из cookie
+                if (!authToken) {
+                    const cookies = document.cookie.split(';');
+                    
+                    for(let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith('token=')) {
+                            authToken = cookie.substring('token='.length, cookie.length);
+                            console.log('Найден токен в cookie при проверке авторизации:', authToken);
+                            
+                            // Сохраним токен в localStorage для будущих запросов
+                            localStorage.setItem('token', authToken);
+                            break;
+                        }
+                    }
+                }
+                
+                // Если токен не найден ни в localStorage, ни в cookie
+                if (!authToken) {
+                    console.error('Токен не найден ни в localStorage, ни в cookie');
+                    window.location.href = '/login';
+                    return null;
+                }
+                
+                const response = await fetch('/user/me', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    // Если пользователь не авторизован, перенаправляем на страницу входа
+                    window.location.href = '/login';
+                    return null;
+                }
+                
+                const user = await response.json();
+                return user;
+            } catch (error) {
+                console.error('Ошибка при проверке авторизации:', error);
+                window.location.href = '/login';
+                return null;
+            }
+        }
+
+        // Функция для получения всех постов
+        async function fetchPosts() {
+            try {
+                console.log('Запрашиваем посты с сервера...');
+                
+                // Проверяем, есть ли токен
+                if (!token) {
+                    console.error('Отсутствует токен авторизации');
+                    
+                    // Попробуем получить токен из cookie
+                    const cookies = document.cookie.split(';');
+                    let tokenFromCookie = null;
+                    
+                    for(let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith('token=')) {
+                            tokenFromCookie = cookie.substring('token='.length, cookie.length);
+                            console.log('Найден токен в cookie:', tokenFromCookie);
+                            break;
+                        }
+                    }
+                    
+                    if (tokenFromCookie) {
+                        // Сохраним токен в localStorage для будущих запросов
+                        localStorage.setItem('token', tokenFromCookie);
+                        
+                        // Используем токен из cookie для текущего запроса
+                        const response = await fetch('/post/', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${tokenFromCookie}`
+                            }
+                        });
+                        
+                        // Продолжаем обработку ответа
+                        console.log('Получен ответ (с токеном из cookie):', response.status, response.statusText);
+                        
+                        // Остальной код обработки ответа
+                        const responseText = await response.text();
+                        console.log('Текст ответа:', responseText);
+                        
+                        // Проверяем, не пустой ли ответ
+                        if (!responseText.trim()) {
+                            console.warn('Сервер вернул пустой ответ');
+                            return [];
+                        }
+                        
+                        try {
+                            const data = JSON.parse(responseText);
+                            console.log('Распарсенные данные:', data);
+                            
+                            if (!Array.isArray(data)) {
+                                console.error('Данные не являются массивом:', data);
+                                return [];
+                            }
+                            
+                            return data;
+                        } catch (parseError) {
+                            console.error('Ошибка парсинга JSON:', parseError);
+                            return [];
+                        }
+                    } else {
+                        console.error('Токен не найден ни в localStorage, ни в cookie');
+                        return [];
+                    }
+                }
+                
+                const response = await fetch('/post/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                console.log('Получен ответ:', response.status, response.statusText);
+                
+                // Даже если у нас не 200, мы все равно попробуем прочитать ответ
+                const responseText = await response.text();
+                console.log('Текст ответа:', responseText);
+                
+                // Проверяем, не пустой ли ответ
+                if (!responseText.trim()) {
+                    console.warn('Сервер вернул пустой ответ');
+                    return [];
+                }
+                
+                try {
+                    const data = JSON.parse(responseText);
+                    console.log('Распарсенные данные:', data);
+                    
+                    if (!Array.isArray(data)) {
+                        console.error('Данные не являются массивом:', data);
+                        return [];
+                    }
+                    
+                    return data;
+                } catch (parseError) {
+                    console.error('Ошибка парсинга JSON:', parseError);
+                    return [];
+                }
+            } catch (error) {
+                console.error('Ошибка при загрузке постов:', error);
+                return [];
+            }
+        }
+        
+        // Функция для создания нового поста
+        async function createPost(text) {
+            try {
+                console.log('Пытаемся создать пост с текстом:', text);
+                
+                // Получаем токен из localStorage или cookie
+                let authToken = token;
+                
+                // Если токен не найден в localStorage, попробуем получить из cookie
+                if (!authToken) {
+                    const cookies = document.cookie.split(';');
+                    
+                    for(let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith('token=')) {
+                            authToken = cookie.substring('token='.length, cookie.length);
+                            console.log('Найден токен в cookie для создания поста:', authToken);
+                            
+                            // Сохраним токен в localStorage для будущих запросов
+                            localStorage.setItem('token', authToken);
+                            break;
+                        }
+                    }
+                    
+                    if (!authToken) {
+                        console.error('Токен не найден ни в localStorage, ни в cookie');
+                        alert('Ошибка авторизации. Пожалуйста, войдите снова.');
+                        return null;
+                    }
+                }
+                
+                const response = await fetch('/post/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        description: text,
+                        like: 0
+                        // user_id будет взят из токена на сервере
+                    })
+                });
+                
+                if (!response.ok) {
+                    // Пытаемся прочитать детали ошибки
+                    const errorData = await response.json();
+                    console.error('Детали ошибки:', errorData);
+                    throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
+                }
+                
+                const newPost = await response.json();
+                console.log('Пост успешно создан:', newPost);
+                return newPost;
+            } catch (error) {
+                console.error('Ошибка при создании поста:', error);
+                alert('Не удалось отправить пост. Пожалуйста, попробуйте позже.');
+                return null;
+            }
+        }
+        
+        // Обработчик отправки формы поста
+        document.querySelector('.btn-post').addEventListener('click', async function() {
+            const textarea = document.querySelector('.compose-input textarea');
+            const postText = textarea.value.trim();
+            
+            if (!postText) {
+                alert('Пожалуйста, введите текст поста');
+                return;
+            }
+            
+            // Показываем индикатор загрузки
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+            this.disabled = true;
+            
+            const newPost = await createPost(postText);
+            
+            // Восстанавливаем кнопку
+            this.innerHTML = 'Опубликовать';
+            this.disabled = false;
+            
+            if (newPost) {
+                textarea.value = '';
+                await displayPosts(); // Обновляем список постов
+            }
+        });
+        
+        // Функция для отображения всех постов
+        async function displayPosts() {
+            const postsContainer = document.querySelector('.posts-container');
+            postsContainer.innerHTML = '<div class="loading">Загрузка постов...</div>';
+            
+            try {
+                const posts = await fetchPosts();
+                
+                if (!Array.isArray(posts) || posts.length === 0) {
+                    postsContainer.innerHTML = '<div class="no-posts">Пока нет постов. Будьте первым!</div>';
+                    return;
+                }
+                
+                console.log(`Получено ${posts.length} постов для отображения`);
+                postsContainer.innerHTML = '';
+                
+                // Сортируем посты по дате (новые сверху)
+                const sortedPosts = [...posts].sort((a, b) => {
+                    const dateA = new Date(a.created_at || 0);
+                    const dateB = new Date(b.created_at || 0);
+                    return dateB - dateA;
+                });
+                
+                // Отображение постов
+                sortedPosts.forEach(post => {
+                    try {
+                        const postElement = createPostElement(post);
+                        postsContainer.appendChild(postElement);
+                    } catch (err) {
+                        console.error('Ошибка при создании элемента поста:', err, post);
+                    }
+                });
+            } catch (error) {
+                console.error('Не удалось отобразить посты:', error);
+                postsContainer.innerHTML = '<div class="error">Не удалось загрузить посты. Пожалуйста, попробуйте позже.</div>';
+            }
+        }
+        
+        // Функция для создания элемента поста с учетом уже лайкнутых постов
         function createPostElement(post) {
+            console.log('Создаем элемент поста из данных:', post);
+            
             const postElement = document.createElement('article');
             postElement.className = 'post';
-            postElement.setAttribute('data-id', post.id);
+            postElement.setAttribute('data-id', post.id || 'unknown');
             
-            const timeAgo = getTimeAgo(post.timestamp);
+            // Форматирование даты
+            const postDate = new Date(post.created_at || Date.now());
+            const timeAgo = getTimeAgo(postDate.getTime());
             
-            postElement.innerHTML = `
-                <div class="post-header">
-                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${post.seed}" alt="User" class="avatar">
-                    <div class="post-info">
-                        <div class="post-user">
-                            <strong>${post.author}</strong>
-                            <span class="username">@${post.username}</span>
-                            <span class="post-time">${timeAgo}</span>
+            // Установим значения пользователя по умолчанию
+            let authorName = 'Пользователь';
+            let authorUsername = 'user';
+            
+            // Получение данных пользователя по user_id
+            const userId = post.user_id;
+            
+            // Можно добавить кеширование пользователей, чтобы не делать запрос каждый раз
+            if (window.userCache && window.userCache[userId]) {
+                const cachedUser = window.userCache[userId];
+                authorName = cachedUser.name || 'Пользователь';
+                authorUsername = cachedUser.nick_name || 'user';
+                renderPost();
+            } else {
+                // Если есть user_id, но нет кешированного пользователя, показываем заглушку
+                // и асинхронно запрашиваем данные пользователя
+                renderPost();
+                
+                // Асинхронно получаем данные пользователя
+                if (userId) {
+                    fetchUserById(userId).then(user => {
+                        if (user) {
+                            // Кешируем данные пользователя
+                            if (!window.userCache) window.userCache = {};
+                            window.userCache[userId] = user;
+                            
+                            // Обновляем элементы DOM с информацией о пользователе
+                            const nameElement = postElement.querySelector('.post-user strong');
+                            const usernameElement = postElement.querySelector('.post-user .username');
+                            const avatarElement = postElement.querySelector('.avatar');
+                            
+                            if (nameElement) nameElement.textContent = user.name || 'Пользователь';
+                            if (usernameElement) usernameElement.textContent = `@${user.nick_name || 'user'}`;
+                            if (avatarElement) avatarElement.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.nick_name || 'unknown'}`;
+                        }
+                    }).catch(error => {
+                        console.error('Ошибка при получении данных пользователя:', error);
+                    });
+                }
+            }
+            
+            function renderPost() {
+                const avatarSeed = authorUsername || 'unknown';
+                const postDescription = post.description || 'Пустой пост';
+                const postLikes = post.like || 0;
+                const postId = post.id || 0;
+                
+                // Проверяем, лайкнул ли пользователь уже этот пост
+                const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+                const isLiked = likedPosts.includes(postId);
+                
+                postElement.innerHTML = `
+                    <div class="post-header">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${avatarSeed}" alt="User" class="avatar">
+                        <div class="post-info">
+                            <div class="post-user">
+                                <strong>${authorName}</strong>
+                                <span class="username">@${authorUsername}</span>
+                                <span class="post-time">${timeAgo}</span>
+                            </div>
+                            <p class="post-text">${postDescription}</p>
                         </div>
-                        <p class="post-text">${post.text}</p>
                     </div>
-                </div>
-                <div class="post-media">
-                    ${post.media ? `<img src="${post.media}" alt="Post image" class="post-image">` : ''}
-                </div>
-                <div class="post-actions">
-                    <button class="post-action like ${post.liked ? 'liked' : ''}" onclick="likePost('${post.id}')">
-                        <i class="${post.liked ? 'fas' : 'far'} fa-heart"></i>
-                        <span class="action-count">${post.likes || 0}</span>
-                    </button>
-                    <button class="post-action comment" onclick="commentPost('${post.id}')">
-                        <i class="far fa-comment"></i>
-                        <span class="action-count">${post.comments || 0}</span>
-                    </button>
-                    <button class="post-action repost" onclick="repostPost('${post.id}')">
-                        <i class="fas fa-retweet"></i>
-                        <span class="action-count">${post.reposts || 0}</span>
-                    </button>
-                    <button class="post-action share" onclick="sharePost('${post.id}')">
-                        <i class="far fa-share-square"></i>
-                    </button>
-                </div>
-            `;
+                    <div class="post-actions">
+                        <button class="post-action like" onclick="likePost(${postId})">
+                            <i class="${isLiked ? 'fas' : 'far'} fa-heart" ${isLiked ? 'style="color: #e74c3c;"' : ''}></i>
+                            <span class="action-count">${postLikes}</span>
+                        </button>
+                        <button class="post-action comment">
+                            <i class="far fa-comment"></i>
+                            <span class="action-count">0</span>
+                        </button>
+                        <button class="post-action repost">
+                            <i class="fas fa-retweet"></i>
+                            <span class="action-count">0</span>
+                        </button>
+                        <button class="post-action share">
+                            <i class="far fa-share-square"></i>
+                        </button>
+                    </div>
+                `;
+            }
             
             return postElement;
+        }
+        
+        // Функция для получения данных пользователя по ID
+        async function fetchUserById(userId) {
+            try {
+                // Получаем токен из localStorage или cookie
+                let authToken = token;
+                
+                // Если токен не найден в localStorage, попробуем получить из cookie
+                if (!authToken) {
+                    const cookies = document.cookie.split(';');
+                    
+                    for(let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith('token=')) {
+                            authToken = cookie.substring('token='.length, cookie.length);
+                            break;
+                        }
+                    }
+                }
+                
+                // Если токен по-прежнему отсутствует, не можем сделать запрос
+                if (!authToken) {
+                    console.error('Нет токена для запроса данных пользователя');
+                    return null;
+                }
+                
+                const response = await fetch(`/user/${userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка при получении данных пользователя: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Ошибка при получении данных пользователя:', error);
+                return null;
+            }
         }
         
         // Функция для получения относительного времени
@@ -342,77 +1036,202 @@
             return date.toLocaleDateString();
         }
         
-        // Обработчик отправки формы поста
-        document.querySelector('.btn-post').addEventListener('click', function() {
-            const textarea = document.querySelector('.compose-input textarea');
-            const postText = textarea.value.trim();
+        // Функция для лайка поста
+        async function likePost(postId) {
+            try {
+                console.log('Лайк поста:', postId);
+                
+                // Проверяем, лайкнул ли пользователь уже этот пост
+                const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+                const isLiked = likedPosts.includes(postId);
+                
+                // Если пост уже лайкнут, то снимаем лайк (дизлайк)
+                if (isLiked) {
+                    return await dislikePost(postId);
+                }
+                
+                // Получаем токен из localStorage или cookie
+                let authToken = token;
+                
+                // Если токен не найден в localStorage, попробуем получить из cookie
+                if (!authToken) {
+                    const cookies = document.cookie.split(';');
+                    
+                    for(let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith('token=')) {
+                            authToken = cookie.substring('token='.length, cookie.length);
+                            break;
+                        }
+                    }
+                }
+                
+                const response = await fetch(`/post/like/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка при добавлении лайка: ${response.status}`);
+                }
+                
+                const updatedPost = await response.json();
+                console.log('Пост успешно лайкнут:', updatedPost);
+                
+                // Обновляем UI для отображения нового количества лайков
+                const likeButton = document.querySelector(`.post[data-id="${postId}"] .post-action.like`);
+                if (likeButton) {
+                    const countElement = likeButton.querySelector('.action-count');
+                    if (countElement) {
+                        countElement.textContent = updatedPost.like;
+                    }
+                    
+                    // Меняем стиль кнопки лайка, чтобы показать, что пост уже лайкнут
+                    const iconElement = likeButton.querySelector('i');
+                    if (iconElement) {
+                        iconElement.classList.remove('far');
+                        iconElement.classList.add('fas');
+                        iconElement.style.color = '#e74c3c'; // Красный цвет для лайкнутого поста
+                    }
+                }
+                
+                // Сохраняем ID поста в localStorage, чтобы запомнить, что пользователь уже лайкнул его
+                likedPosts.push(postId);
+                localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+                
+                return updatedPost;
+            } catch (error) {
+                console.error('Ошибка при лайке поста:', error);
+                return null;
+            }
+        }
+        
+        // Функция для удаления лайка (дизлайк)
+        async function dislikePost(postId) {
+            try {
+                console.log('Отмена лайка поста:', postId);
+                
+                // Получаем токен из localStorage или cookie
+                let authToken = token;
+                
+                // Если токен не найден в localStorage, попробуем получить из cookie
+                if (!authToken) {
+                    const cookies = document.cookie.split(';');
+                    
+                    for(let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.startsWith('token=')) {
+                            authToken = cookie.substring('token='.length, cookie.length);
+                            break;
+                        }
+                    }
+                }
+                
+                const response = await fetch(`/post/dislike/${postId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Ошибка при удалении лайка: ${response.status}`);
+                }
+                
+                const updatedPost = await response.json();
+                console.log('Лайк успешно удален:', updatedPost);
+                
+                // Обновляем UI для отображения нового количества лайков
+                const likeButton = document.querySelector(`.post[data-id="${postId}"] .post-action.like`);
+                if (likeButton) {
+                    const countElement = likeButton.querySelector('.action-count');
+                    if (countElement) {
+                        countElement.textContent = updatedPost.like;
+                    }
+                    
+                    // Меняем стиль кнопки лайка, чтобы показать, что пост не лайкнут
+                    const iconElement = likeButton.querySelector('i');
+                    if (iconElement) {
+                        iconElement.classList.remove('fas');
+                        iconElement.classList.add('far');
+                        iconElement.style.color = ''; // Сбрасываем цвет
+                    }
+                }
+                
+                // Удаляем ID поста из списка лайкнутых
+                const likedPosts = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+                const updatedLikedPosts = likedPosts.filter(id => id !== postId);
+                localStorage.setItem('likedPosts', JSON.stringify(updatedLikedPosts));
+                
+                return updatedPost;
+            } catch (error) {
+                console.error('Ошибка при удалении лайка:', error);
+                return null;
+            }
+        }
+        
+        // Обработчик выхода из системы
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+        
+        // Обработчик нажатия на кнопку выхода
+        document.addEventListener('DOMContentLoaded', function() {
+            // Обработка выпадающего меню
+            const userAvatar = document.getElementById('userAvatar');
+            const dropdownMenu = document.getElementById('dropdownMenu');
             
-            if (!postText) return;
+            if (userAvatar && dropdownMenu) {
+                userAvatar.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+                });
+                
+                // Закрытие меню при клике вне его
+                document.addEventListener('click', function(e) {
+                    if (!userAvatar.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                        dropdownMenu.style.display = 'none';
+                    }
+                });
+            }
             
-            const newPost = {
-                id: Date.now().toString(),
-                author: 'Пользователь',
-                username: 'user',
-                text: postText,
-                timestamp: Date.now(),
-                likes: 0,
-                comments: 0,
-                reposts: 0,
-                liked: false,
-                seed: Math.random().toString(36).substring(7)
-            };
-            
-            posts.push(newPost);
-            localStorage.setItem('posts', JSON.stringify(posts));
-            
-            textarea.value = '';
-            displayPosts();
+            // Обработка выхода
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', logout);
+            }
         });
         
-        // Функция для лайка поста
-        function likePost(postId) {
-            const postIndex = posts.findIndex(post => post.id === postId);
-            if (postIndex === -1) return;
+        // Инициализация страницы
+        async function initPage() {
+            const user = await checkAuth();
+            if (!user) return; // Если нет авторизации, выходим
             
-            const post = posts[postIndex];
-            if (post.liked) {
-                post.likes--;
-            } else {
-                post.likes++;
+            console.log('Пользователь авторизован:', user);
+            
+            // Настраиваем аватар пользователя в меню
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar) {
+                userAvatar.innerHTML = `<img src="${user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.nick_name}`}" alt="Avatar" class="avatar">`;
             }
-            post.liked = !post.liked;
             
-            localStorage.setItem('posts', JSON.stringify(posts));
-            displayPosts();
-        }
-        
-        // Функция для комментария к посту (заглушка)
-        function commentPost(postId) {
-            const postIndex = posts.findIndex(post => post.id === postId);
-            if (postIndex === -1) return;
+            // Настраиваем аватар в форме создания поста
+            const composeAvatar = document.querySelector('.compose-post .avatar');
+            if (composeAvatar) {
+                composeAvatar.src = user.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.nick_name}`;
+            }
             
-            posts[postIndex].comments++;
-            localStorage.setItem('posts', JSON.stringify(posts));
-            displayPosts();
+            // Загружаем посты
+            await displayPosts();
         }
         
-        // Функция для репоста (заглушка)
-        function repostPost(postId) {
-            const postIndex = posts.findIndex(post => post.id === postId);
-            if (postIndex === -1) return;
-            
-            posts[postIndex].reposts++;
-            localStorage.setItem('posts', JSON.stringify(posts));
-            displayPosts();
-        }
-        
-        // Функция для шеринга (заглушка)
-        function sharePost(postId) {
-            alert('Функция шеринга будет добавлена позже');
-        }
-        
-        // Загрузка постов при загрузке страницы
-        window.addEventListener('load', displayPosts);
+        // Запускаем инициализацию при загрузке страницы
+        window.addEventListener('load', initPage);
     </script>
 </body>
 </html> 

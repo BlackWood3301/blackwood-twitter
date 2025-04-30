@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blackwood - Создать аккаунт</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/signup.css">
+    <title>Blackwood - Регистрация</title>
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <link rel="stylesheet" href="/static/styles/signup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
                 <span>Blackwood</span>
             </div>
             <div class="nav-buttons">
-                <a href="index.html" class="btn btn-login">На главную</a>
+                <a href="/" class="btn btn-login">На главную</a>
             </div>
         </div>
     </nav>
@@ -91,7 +91,7 @@
                 <button type="submit" class="btn btn-primary btn-block">Создать аккаунт</button>
             </form>
 
-            <p class="login-link">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+            <p class="login-link">Уже есть аккаунт? <a href="/login">Войти</a></p>
         </div>
     </main>
 
@@ -121,7 +121,7 @@
     </style>
 
     <!-- Подключаем API -->
-    <script src="js/api.js"></script>
+    <script src="/static/js/api.js"></script>
     <script>
         /* Закомментируем код проверки авторизации
         // Проверяем, авторизован ли пользователь
@@ -236,7 +236,7 @@
             const { strength, feedback } = checkPasswordStrength(password);
             const strengthBar = document.querySelector('.strength-bar');
             const strengthText = document.querySelector('.strength-text span');
-            const validationMessage = document.querySelector('#password + .validation-message');
+            const validationMessage = document.querySelector('#password').closest('.form-group').querySelector('.validation-message');
 
             // Обновление полосы прогресса
             strengthBar.style.width = `${(strength / 4) * 100}%`;
@@ -257,8 +257,11 @@
             }
 
             // Обновление сообщения валидации
-            validationMessage.textContent = feedback.join(', ');
-            validationMessage.style.color = strength <= 2 ? '#ff4444' : '#00C851';
+            if (validationMessage) {
+                validationMessage.textContent = feedback.join(', ');
+                validationMessage.style.color = strength <= 2 ? '#ff4444' : '#00C851';
+                validationMessage.style.display = feedback.length > 0 ? 'block' : 'none';
+            }
         }
 
         // Показ сообщения об ошибке
@@ -353,32 +356,35 @@
             };
             
             try {
-                console.log('Отправляем данные на регистрацию:', userData);
-                
-                // Отправляем запрос на регистрацию
-                const response = await fetch('http://localhost:8000/user/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
+                console.log('Отправляем данные для регистрации:', {
+                    email: email,
+                    password: '***',
+                    nike_name: username,
+                    name: displayName
                 });
                 
-                console.log('Получен ответ от сервера:', response);
+                // Отправляем запрос на регистрацию
+                const response = await fetch('/user/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        name: displayName,
+                        nick_name: username,
+                        image: uploadedImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentAvatarSeed}`
+                    })
+                });
                 
                 const result = await response.json();
-                console.log('Данные ответа:', result);
                 
                 if (response.ok) {
                     console.log('Запрос успешен, получен токен:', result.access_token);
-                    // Сохраняем токен в localStorage
-                    if (result.access_token) {
-                        localStorage.setItem('token', result.access_token);
-                    }
-                    
+                    localStorage.setItem('token', result.access_token);
                     // Перенаправляем на ленту новостей
-                    window.location.href = 'signup.html';
+                    window.location.href = '/feed';
                 } else {
                     // Показываем ошибку
                     const errorMessage = result.message || result.detail || 'Ошибка при регистрации';

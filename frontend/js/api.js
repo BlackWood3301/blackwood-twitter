@@ -1,5 +1,5 @@
-// Базовый URL API
-const API_URL = 'http://localhost:8000';
+// Базовый URL API - используем относительные пути 
+const API_URL = '';
 
 // Функция для работы с API
 async function apiRequest(endpoint, method = 'GET', data = null) {

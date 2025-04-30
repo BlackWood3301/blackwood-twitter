@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackwood - Присоединяйтесь к сообществу</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="/static/styles/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -15,9 +15,9 @@
                 <span>Blackwood</span>
             </div>
             <div class="nav-buttons">
-                <a href="signup.html" class="btn btn-signup">Зарегистрироваться</a>
-                <a href="login.html" class="btn btn-login">Войти</a>
-                <a href="feed.html" class="btn btn-secondary">Лента</a>
+                <a href="/signup" class="btn btn-signup">Зарегистрироваться</a>
+                <a href="/login" class="btn btn-login">Войти</a>
+                <a href="/feed" class="btn btn-secondary">Лента</a>
             </div>
         </div>
     </nav>
@@ -49,8 +49,8 @@
                 <div class="cta-section">
                     <h2>Готовы начать?</h2>
                     <p>Создайте аккаунт прямо сейчас и присоединяйтесь к миллионам пользователей</p>
-                    <a href="signup.html" class="btn btn-primary">Создать аккаунт</a>
-                    <p class="login-link">Уже есть аккаунт? <a href="login.html">Войти</a></p>
+                    <a href="/signup" class="btn btn-primary">Создать аккаунт</a>
+                    <p class="login-link">Уже есть аккаунт? <a href="/login">Войти</a></p>
                 </div>
             </div>
             <div class="hero-image">
@@ -121,7 +121,7 @@
     </footer>
 
     <!-- Подключаем API -->
-    <script src="js/api.js"></script>
+    <script src="/static/js/api.js"></script>
     <script>
         /* Закомментируем весь код проверки авторизации
         // Проверяем, авторизован ли пользователь

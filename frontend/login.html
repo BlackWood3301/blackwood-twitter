@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blackwood - Вход</title>
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/signup.css">
+    <link rel="stylesheet" href="/static/styles/main.css">
+    <link rel="stylesheet" href="/static/styles/signup.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
                 <span>Blackwood</span>
             </div>
             <div class="nav-buttons">
-                <a href="index.html" class="btn btn-login">На главную</a>
+                <a href="/" class="btn btn-login">На главную</a>
             </div>
         </div>
     </nav>
@@ -47,12 +47,12 @@
                 <button type="submit" class="btn btn-primary btn-block">Войти</button>
             </form>
 
-            <p class="login-link">Нет аккаунта? <a href="signup.html">регистрация</a></p>
+            <p class="login-link">Нет аккаунта? <a href="/signup">регистрация</a></p>
         </div>
     </main>
 
     <!-- Подключаем API -->
-    <script src="js/api.js"></script>
+    <script src="/static/js/api.js"></script>
     <script>
         // Переключение видимости пароля
         function togglePasswordVisibility(inputId) {
@@ -89,7 +89,7 @@
                 console.log('Выполняем вход с учетными данными:', { email });
                 
                 // Отправляем запрос на вход
-                const response = await fetch('http://localhost:8000/user/login', {
+                const response = await fetch('/user/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -101,16 +101,40 @@
                     })
                 });
                 
-                const result = await response.json();
-                console.log('Ответ сервера:', result);
+                console.log('Статус ответа:', response.status, response.statusText);
+                
+                // Получаем текст ответа сначала в виде строки
+                const responseText = await response.text();
+                console.log('Текст ответа:', responseText);
+                
+                // Затем пробуем распарсить JSON
+                let result;
+                try {
+                    result = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Ошибка парсинга JSON:', e);
+                }
+                
+                console.log('Результат входа:', result);
                 
                 if (response.ok) {
+                    // Проверяем куки перед сохранением токена
+                    console.log('Куки до сохранения токена:', document.cookie);
+                    
                     // Сохраняем токен, если он есть в ответе
                     if (result.access_token) {
                         localStorage.setItem('token', result.access_token);
                     }
-                    // Перенаправляем на ленту новостей
-                    window.location.href = 'feed.html';
+                    
+                    // Куки после сохранения токена
+                    console.log('Куки после сохранения токена:', document.cookie);
+                    
+                    // Используем короткую задержку перед перенаправлением
+                    setTimeout(() => {
+                        console.log('Куки перед перенаправлением:', document.cookie);
+                        // Перенаправляем на ленту новостей
+                        window.location.href = '/feed';
+                    }, 500);
                 } else {
                     // Показываем ошибку
                     const errorMessage = result.message || 'Ошибка при входе в систему';
