@@ -47,10 +47,12 @@
                 <button type="submit" class="btn btn-primary btn-block">Войти</button>
             </form>
 
-            <p class="login-link">Нет аккаунта? <a href="signup.html">Зарегистрироваться</a></p>
+            <p class="login-link">Нет аккаунта? <a href="signup.html">регистрация</a></p>
         </div>
     </main>
 
+    <!-- Подключаем API -->
+    <script src="js/api.js"></script>
     <script>
         // Переключение видимости пароля
         function togglePasswordVisibility(inputId) {
@@ -68,43 +70,61 @@
             }
         }
 
-        // Обработка отправки формы
+        // Обработка отправки формы для регистрации
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            // Очищаем предыдущие сообщения об ошибках
+            const validationMessages = document.querySelectorAll('.validation-message');
+            validationMessages.forEach(element => {
+                element.textContent = '';
+                element.style.display = 'none';
+            });
+            
+            // Получаем данные из формы
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
+            
             try {
+                console.log('Выполняем вход с учетными данными:', { email });
+                
+                // Отправляем запрос на вход
                 const response = await fetch('http://localhost:8000/user/login', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
                     },
                     body: JSON.stringify({
-                        email,
-                        password
+                        email: email,
+                        password: password
                     })
                 });
-
-                const data = await response.json();
-
+                
+                const result = await response.json();
+                console.log('Ответ сервера:', result);
+                
                 if (response.ok) {
-                    // Сохраняем токен
-                    localStorage.setItem('token', data.access_token);
-                    // Перенаправляем на главную
-                    window.location.href = 'index.html';
+                    // Сохраняем токен, если он есть в ответе
+                    if (result.access_token) {
+                        localStorage.setItem('token', result.access_token);
+                    }
+                    // Перенаправляем на ленту новостей
+                    window.location.href = 'feed.html';
                 } else {
                     // Показываем ошибку
-                    const validationMessage = document.querySelector('.validation-message');
-                    validationMessage.textContent = data.detail || 'Ошибка входа';
-                    validationMessage.style.display = 'block';
+                    const errorMessage = result.message || 'Ошибка при входе в систему';
+                    validationMessages.forEach(element => {
+                        element.textContent = errorMessage;
+                        element.style.display = 'block';
+                    });
                 }
             } catch (error) {
-                console.error('Ошибка:', error);
-                const validationMessage = document.querySelector('.validation-message');
-                validationMessage.textContent = 'Ошибка сервера';
-                validationMessage.style.display = 'block';
+                console.error('Ошибка при отправке запроса:', error);
+                validationMessages.forEach(element => {
+                    element.textContent = 'Ошибка сервера: не удалось выполнить запрос';
+                    element.style.display = 'block';
+                });
             }
         });
     </script>

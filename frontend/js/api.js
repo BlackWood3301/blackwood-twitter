@@ -16,7 +16,8 @@ async function apiRequest(endpoint, method = 'GET', data = null) {
     const config = {
         method,
         headers,
-        credentials: 'include'
+        // Удаляем credentials, так как это может вызывать проблемы с CORS
+        // credentials: 'include'
     };
 
     if (data) {

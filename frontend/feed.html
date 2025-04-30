@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackwood - Лента</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/feed.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fab fa-blackwood"></i>
+                <span>Blackwood</span>
+            </div>
+            <div class="nav-buttons">
+                <a href="index.html" class="btn btn-secondary">Главная</a>
+                <a href="feed.html" class="btn btn-primary active">Лента</a>
+                <a href="login.html" class="btn btn-login">Войти</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="feed-container">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Популярные темы</h3>
+                <ul class="trending-list">
+                    <li>
+                        <a href="#">#ИскусственныйИнтеллект</a>
+                        <span>2.5K постов</span>
+                    </li>
+                    <li>
+                        <a href="#">#Стартапы2024</a>
+                        <span>1.8K постов</span>
+                    </li>
+                    <li>
+                        <a href="#">#КосмическиеОткрытия</a>
+                        <span>3.2K постов</span>
+                    </li>
+                    <li>
+                        <a href="#">#НоваяТехнология</a>
+                        <span>1.4K постов</span>
+                    </li>
+                    <li>
+                        <a href="#">#ЦифровоеИскусство</a>
+                        <span>950 постов</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Кого читать</h3>
+                <ul class="users-to-follow">
+                    <li>
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maria" alt="User" class="avatar">
+                        <div class="user-info">
+                            <strong>Мария Иванова</strong>
+                            <span>@maria</span>
+                        </div>
+                        <button class="btn btn-follow">Читать</button>
+                    </li>
+                    <li>
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="User" class="avatar">
+                        <div class="user-info">
+                            <strong>Алексей Петров</strong>
+                            <span>@alexey</span>
+                        </div>
+                        <button class="btn btn-follow">Читать</button>
+                    </li>
+                    <li>
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anna" alt="User" class="avatar">
+                        <div class="user-info">
+                            <strong>Анна Сидорова</strong>
+                            <span>@anna</span>
+                        </div>
+                        <button class="btn btn-follow">Читать</button>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="compose-post">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=user" alt="User" class="avatar">
+                <div class="compose-input">
+                    <textarea placeholder="Что нового?"></textarea>
+                    <div class="compose-actions">
+                        <div class="compose-tools">
+                            <button type="button" class="btn-icon"><i class="far fa-image"></i></button>
+                            <button type="button" class="btn-icon"><i class="far fa-smile"></i></button>
+                            <button type="button" class="btn-icon"><i class="fas fa-poll"></i></button>
+                            <button type="button" class="btn-icon"><i class="fas fa-map-marker-alt"></i></button>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-post">Опубликовать</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feed-tabs">
+                <button class="tab-btn active">Все посты</button>
+                <button class="tab-btn">Самое интересное</button>
+                <button class="tab-btn">Друзья</button>
+            </div>
+
+            <div class="posts-container">
+                <!-- Пост 1 -->
+                <article class="post">
+                    <div class="post-header">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ivan" alt="User" class="avatar">
+                        <div class="post-info">
+                            <div class="post-user">
+                                <strong>Иван Иванов</strong>
+                                <span class="username">@ivan</span>
+                                <span class="post-time">· 2 часа назад</span>
+                            </div>
+                            <p class="post-text">
+                                Сегодня запустили новый проект! Очень горжусь нашей командой и тем, чего мы достигли. 
+                                #разработка #стартап #технологии
+                            </p>
+                        </div>
+                    </div>
+                    <div class="post-media">
+                        <img src="https://picsum.photos/600/300?random=1" alt="Post image" class="post-image">
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-action" onclick="toggleAction(this, 'like')">
+                            <i class="far fa-heart"></i>
+                            <span class="action-count">42</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'comment')">
+                            <i class="far fa-comment"></i>
+                            <span class="action-count">12</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'repost')">
+                            <i class="fas fa-retweet"></i>
+                            <span class="action-count">8</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'share')">
+                            <i class="far fa-share-square"></i>
+                            <span class="action-count">5</span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Пост 2 -->
+                <article class="post">
+                    <div class="post-header">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Maria" alt="User" class="avatar">
+                        <div class="post-info">
+                            <div class="post-user">
+                                <strong>Мария Иванова</strong>
+                                <span class="username">@maria</span>
+                                <span class="post-time">· 5 часов назад</span>
+                            </div>
+                            <p class="post-text">
+                                Только что прочитала потрясающую книгу по искусственному интеллекту. Рекомендую всем, 
+                                кто интересуется этой темой! #ИИ #книги #рекомендация
+                            </p>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-action" onclick="toggleAction(this, 'like')">
+                            <i class="far fa-heart"></i>
+                            <span class="action-count">28</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'comment')">
+                            <i class="far fa-comment"></i>
+                            <span class="action-count">7</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'repost')">
+                            <i class="fas fa-retweet"></i>
+                            <span class="action-count">3</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'share')">
+                            <i class="far fa-share-square"></i>
+                            <span class="action-count">1</span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Пост 3 -->
+                <article class="post">
+                    <div class="post-header">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="User" class="avatar">
+                        <div class="post-info">
+                            <div class="post-user">
+                                <strong>Алексей Петров</strong>
+                                <span class="username">@alexey</span>
+                                <span class="post-time">· вчера</span>
+                            </div>
+                            <p class="post-text">
+                                Был на конференции по веб-разработке. Столько новых идей и технологий! 
+                                Особенно впечатлили доклады по WebAssembly и новым возможностям CSS. 
+                                #webdev #frontend #conference
+                            </p>
+                        </div>
+                    </div>
+                    <div class="post-media">
+                        <div class="image-grid">
+                            <img src="https://picsum.photos/300/300?random=2" alt="Conference photo 1">
+                            <img src="https://picsum.photos/300/300?random=3" alt="Conference photo 2">
+                            <img src="https://picsum.photos/300/300?random=4" alt="Conference photo 3">
+                            <img src="https://picsum.photos/300/300?random=5" alt="Conference photo 4">
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-action" onclick="toggleAction(this, 'like')">
+                            <i class="far fa-heart"></i>
+                            <span class="action-count">64</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'comment')">
+                            <i class="far fa-comment"></i>
+                            <span class="action-count">23</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'repost')">
+                            <i class="fas fa-retweet"></i>
+                            <span class="action-count">15</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'share')">
+                            <i class="far fa-share-square"></i>
+                            <span class="action-count">9</span>
+                        </button>
+                    </div>
+                </article>
+
+                <!-- Пост 4 -->
+                <article class="post">
+                    <div class="post-header">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Anna" alt="User" class="avatar">
+                        <div class="post-info">
+                            <div class="post-user">
+                                <strong>Анна Сидорова</strong>
+                                <span class="username">@anna</span>
+                                <span class="post-time">· 2 дня назад</span>
+                            </div>
+                            <p class="post-text">
+                                Запустила свой первый проект на Python с использованием FastAPI! 
+                                Делюсь опытом: документация отличная, работать приятно, производительность на высоте.
+                                #Python #FastAPI #бэкенд #разработка
+                            </p>
+                        </div>
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-action" onclick="toggleAction(this, 'like')">
+                            <i class="far fa-heart"></i>
+                            <span class="action-count">89</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'comment')">
+                            <i class="far fa-comment"></i>
+                            <span class="action-count">32</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'repost')">
+                            <i class="fas fa-retweet"></i>
+                            <span class="action-count">17</span>
+                        </button>
+                        <button class="post-action" onclick="toggleAction(this, 'share')">
+                            <i class="far fa-share-square"></i>
+                            <span class="action-count">11</span>
+                        </button>
+                    </div>
+                </article>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Массив для хранения постов
+        let posts = JSON.parse(localStorage.getItem('posts')) || [];
+        
+        // Функция для отображения всех постов
+        function displayPosts() {
+            const postsContainer = document.querySelector('.posts-container');
+            postsContainer.innerHTML = '';
+            
+            // Сортировка постов по времени (новые сверху)
+            posts.sort((a, b) => b.timestamp - a.timestamp);
+            
+            posts.forEach(post => {
+                const postElement = createPostElement(post);
+                postsContainer.appendChild(postElement);
+            });
+        }
+        
+        // Функция для создания элемента поста
+        function createPostElement(post) {
+            const postElement = document.createElement('article');
+            postElement.className = 'post';
+            postElement.setAttribute('data-id', post.id);
+            
+            const timeAgo = getTimeAgo(post.timestamp);
+            
+            postElement.innerHTML = `
+                <div class="post-header">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${post.seed}" alt="User" class="avatar">
+                    <div class="post-info">
+                        <div class="post-user">
+                            <strong>${post.author}</strong>
+                            <span class="username">@${post.username}</span>
+                            <span class="post-time">${timeAgo}</span>
+                        </div>
+                        <p class="post-text">${post.text}</p>
+                    </div>
+                </div>
+                <div class="post-media">
+                    ${post.media ? `<img src="${post.media}" alt="Post image" class="post-image">` : ''}
+                </div>
+                <div class="post-actions">
+                    <button class="post-action like ${post.liked ? 'liked' : ''}" onclick="likePost('${post.id}')">
+                        <i class="${post.liked ? 'fas' : 'far'} fa-heart"></i>
+                        <span class="action-count">${post.likes || 0}</span>
+                    </button>
+                    <button class="post-action comment" onclick="commentPost('${post.id}')">
+                        <i class="far fa-comment"></i>
+                        <span class="action-count">${post.comments || 0}</span>
+                    </button>
+                    <button class="post-action repost" onclick="repostPost('${post.id}')">
+                        <i class="fas fa-retweet"></i>
+                        <span class="action-count">${post.reposts || 0}</span>
+                    </button>
+                    <button class="post-action share" onclick="sharePost('${post.id}')">
+                        <i class="far fa-share-square"></i>
+                    </button>
+                </div>
+            `;
+            
+            return postElement;
+        }
+        
+        // Функция для получения относительного времени
+        function getTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            
+            if (diff < 60000) return 'только что';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)} мин назад`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)} ч назад`;
+            
+            const date = new Date(timestamp);
+            return date.toLocaleDateString();
+        }
+        
+        // Обработчик отправки формы поста
+        document.querySelector('.btn-post').addEventListener('click', function() {
+            const textarea = document.querySelector('.compose-input textarea');
+            const postText = textarea.value.trim();
+            
+            if (!postText) return;
+            
+            const newPost = {
+                id: Date.now().toString(),
+                author: 'Пользователь',
+                username: 'user',
+                text: postText,
+                timestamp: Date.now(),
+                likes: 0,
+                comments: 0,
+                reposts: 0,
+                liked: false,
+                seed: Math.random().toString(36).substring(7)
+            };
+            
+            posts.push(newPost);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            
+            textarea.value = '';
+            displayPosts();
+        });
+        
+        // Функция для лайка поста
+        function likePost(postId) {
+            const postIndex = posts.findIndex(post => post.id === postId);
+            if (postIndex === -1) return;
+            
+            const post = posts[postIndex];
+            if (post.liked) {
+                post.likes--;
+            } else {
+                post.likes++;
+            }
+            post.liked = !post.liked;
+            
+            localStorage.setItem('posts', JSON.stringify(posts));
+            displayPosts();
+        }
+        
+        // Функция для комментария к посту (заглушка)
+        function commentPost(postId) {
+            const postIndex = posts.findIndex(post => post.id === postId);
+            if (postIndex === -1) return;
+            
+            posts[postIndex].comments++;
+            localStorage.setItem('posts', JSON.stringify(posts));
+            displayPosts();
+        }
+        
+        // Функция для репоста (заглушка)
+        function repostPost(postId) {
+            const postIndex = posts.findIndex(post => post.id === postId);
+            if (postIndex === -1) return;
+            
+            posts[postIndex].reposts++;
+            localStorage.setItem('posts', JSON.stringify(posts));
+            displayPosts();
+        }
+        
+        // Функция для шеринга (заглушка)
+        function sharePost(postId) {
+            alert('Функция шеринга будет добавлена позже');
+        }
+        
+        // Загрузка постов при загрузке страницы
+        window.addEventListener('load', displayPosts);
+    </script>
+</body>
+</html> 

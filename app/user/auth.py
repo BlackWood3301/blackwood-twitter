@@ -35,26 +35,25 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
-# async def get_current_user(token: str = Depends(oauth2_scheme)) -> User:
-#     """Получение текущего пользователя"""
-#     credentials_exception = HTTPException(
-#         status_code=status.HTTP_401_UNAUTHORIZED,
-#         detail="Could not validate credentials",
-#         headers={"WWW-Authenticate": "Bearer"},
-#     )
-#     try:
-#         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-#         username: str = payload.get("sub")
-#         if username is None:
-#             raise credentials_exception
-#     except JWTError:
-#         raise credentials_exception
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    """Получение текущего пользователя"""
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
     
-#     # Асинхронный запрос к базе данных
-#     async with session() as db:
-#         result = await db.execute(select(User).filter(User.username == username))
-#         user = result.scalar_one_or_none()
+    # Получаем пользователя из базы данных
+    from app.user.dao import UserDao
+    user = await UserDao.find_one_or_none(id=int(user_id))
     
-#     if user is None:
-#         raise credentials_exception
-#     return user 
+    if user is None:
+        raise credentials_exception
+    return user 

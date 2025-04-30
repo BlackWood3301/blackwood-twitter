@@ -35,10 +35,7 @@
                         <button type="button" class="btn btn-secondary" onclick="generateNewAvatar()">
                             <i class="fas fa-random"></i> Сгенерировать
                         </button>
-                        <label class="btn btn-secondary">
-                            <i class="fas fa-upload"></i> Загрузить
-                            <input type="file" accept="image/*" onchange="handleImageUpload(event)" hidden>
-                        </label>
+
                     </div>
                 </div>
 
@@ -123,20 +120,60 @@
     }
     </style>
 
+    <!-- Подключаем API -->
+    <script src="js/api.js"></script>
     <script>
+        /* Закомментируем код проверки авторизации
+        // Проверяем, авторизован ли пользователь
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    // Получаем информацию о текущем пользователе
+                    const user = await userApi.getCurrentUser();
+                    console.log('Получены данные пользователя:', user);
+                    
+                    // Предзаполняем форму
+                    if (user.email) document.getElementById('email').value = user.email;
+                    if (user.nick_name) document.getElementById('username').value = user.nick_name;
+                    if (user.name) document.getElementById('displayName').value = user.name;
+                    
+                    // Если есть аватар, устанавливаем его
+                    if (user.image) {
+                        document.getElementById('avatarPreview').src = user.image;
+                        currentAvatarSeed = user.nick_name || 'user'; // Используем ник как seed
+                    }
+                    
+                } catch (error) {
+                    console.error('Ошибка при получении данных пользователя:', error);
+                    // Если токен невалидный, удаляем его
+                    localStorage.removeItem('token');
+                }
+            }
+        }
+
+        // Запускаем проверку авторизации при загрузке страницы
+        window.addEventListener('DOMContentLoaded', checkAuth);
+        */
+
         // Генерация нового аватара
+        let currentAvatarSeed = 'default';
+        
         function generateNewAvatar() {
-            const seed = Math.random().toString(36).substring(7);
-            document.getElementById('avatarPreview').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+            currentAvatarSeed = Math.random().toString(36).substring(7);
+            document.getElementById('avatarPreview').src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentAvatarSeed}`;
         }
 
         // Загрузка изображения
+        let uploadedImage = null;
+        
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('avatarPreview').src = e.target.result;
+                    uploadedImage = e.target.result;
                 }
                 reader.readAsDataURL(file);
             }
@@ -224,33 +261,151 @@
             validationMessage.style.color = strength <= 2 ? '#ff4444' : '#00C851';
         }
 
-        // Обработка формы
-        document.getElementById('signupForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            if (!validateUsername(username)) {
-                document.querySelector('#username + .validation-message').textContent = 
-                    'Имя пользователя может содержать только буквы, цифры и подчеркивания';
+        // Показ сообщения об ошибке
+        function showError(element, message) {
+            if (!element) {
+                console.error('Элемент не найден:', element);
+                alert(message); // Если элемент не найден, показываем сообщение через alert
                 return;
             }
             
+            const validationMessage = element.querySelector('.validation-message');
+            if (!validationMessage) {
+                console.error('Элемент .validation-message не найден внутри:', element);
+                alert(message); // Если .validation-message не найден, показываем сообщение через alert
+                return;
+            }
+            
+            validationMessage.textContent = message;
+            validationMessage.style.display = 'block';
+            validationMessage.style.color = '#ff4444';
+        }
+
+        // Валидация формы
+        function validateForm() {
+            let isValid = true;
+            
+            // Проверка, что все поля заполнены
+            const requiredFields = ['username', 'displayName', 'email', 'password', 'confirmPassword'];
+            for (const fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value.trim()) {
+                    showError(field.parentNode, 'Это поле обязательно для заполнения');
+                    isValid = false;
+                }
+            }
+            
+            // Валидация имени пользователя
+            const username = document.getElementById('username').value;
+            if (username.trim() && !validateUsername(username)) {
+                showError(document.getElementById('username').parentNode, 
+                    'Имя пользователя может содержать только буквы, цифры и подчеркивания');
+                isValid = false;
+            }
+            
+            // Валидация паролей
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             
-            if (password !== confirmPassword) {
-                document.querySelector('#confirmPassword + .validation-message').textContent = 'Пароли не совпадают';
-                return;
+            if (password && confirmPassword && password !== confirmPassword) {
+                showError(document.getElementById('confirmPassword').parentNode, 'Пароли не совпадают');
+                isValid = false;
             }
 
-            const { strength } = checkPasswordStrength(password);
-            if (strength < 3) {
-                alert('Пожалуйста, используйте более сложный пароль');
+            if (password) {
+                const { strength } = checkPasswordStrength(password);
+                if (strength < 3) {
+                    showError(document.getElementById('password').parentNode, 'Пожалуйста, используйте более сложный пароль');
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+
+        // Обработка формы
+        document.getElementById('signupForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Очищаем все сообщения об ошибках
+            const validationMessages = document.querySelectorAll('.validation-message');
+            validationMessages.forEach(element => {
+                element.textContent = '';
+                element.style.display = 'none';
+            });
+            
+            if (!validateForm()) {
                 return;
             }
-
-            // Здесь будет отправка формы на сервер
-            alert('Аккаунт успешно создан!');
+            
+            const username = document.getElementById('username').value;
+            const displayName = document.getElementById('displayName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            // Формируем данные для отправки
+            const userData = {
+                nick_name: username,
+                name: displayName,
+                email: email,
+                password: password,
+                image: uploadedImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentAvatarSeed}`
+            };
+            
+            try {
+                console.log('Отправляем данные на регистрацию:', userData);
+                
+                // Отправляем запрос на регистрацию
+                const response = await fetch('http://localhost:8000/user/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                console.log('Получен ответ от сервера:', response);
+                
+                const result = await response.json();
+                console.log('Данные ответа:', result);
+                
+                if (response.ok) {
+                    console.log('Запрос успешен, получен токен:', result.access_token);
+                    // Сохраняем токен в localStorage
+                    if (result.access_token) {
+                        localStorage.setItem('token', result.access_token);
+                    }
+                    
+                    // Перенаправляем на ленту новостей
+                    window.location.href = 'signup.html';
+                } else {
+                    // Показываем ошибку
+                    const errorMessage = result.message || result.detail || 'Ошибка при регистрации';
+                    console.error('Ошибка в ответе сервера:', errorMessage);
+                    
+                    // Особое сообщение для ошибки 422
+                    if (response.status === 422) {
+                        console.error('Ошибка валидации данных:', result);
+                        const validationErrors = result.detail || [];
+                        
+                        let errorDetails = 'Проблемы с данными формы:';
+                        if (Array.isArray(validationErrors)) {
+                            validationErrors.forEach(err => {
+                                errorDetails += `\n- ${err.loc.join('.')}: ${err.msg}`;
+                            });
+                            alert(`Ошибка валидации данных: ${errorDetails}`);
+                        } else {
+                            alert('Ошибка валидации данных: ' + JSON.stringify(result));
+                        }
+                    } else {
+                        alert('Ошибка: ' + errorMessage);
+                    }
+                }
+            } catch (error) {
+                console.error('Ошибка при отправке запроса:', error);
+                alert('Ошибка сервера: ' + error.message);
+            }
         });
 
         // Обработка ввода пароля

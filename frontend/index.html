@@ -17,6 +17,7 @@
             <div class="nav-buttons">
                 <a href="signup.html" class="btn btn-signup">Зарегистрироваться</a>
                 <a href="login.html" class="btn btn-login">Войти</a>
+                <a href="feed.html" class="btn btn-secondary">Лента</a>
             </div>
         </div>
     </nav>
@@ -119,7 +120,41 @@
         </div>
     </footer>
 
+    <!-- Подключаем API -->
+    <script src="js/api.js"></script>
     <script>
+        /* Закомментируем весь код проверки авторизации
+        // Проверяем, авторизован ли пользователь
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    // Получаем информацию о текущем пользователе
+                    const user = await userApi.getCurrentUser();
+                    
+                    // Меняем кнопки в хедере
+                    const navButtons = document.querySelector('.nav-buttons');
+                    navButtons.innerHTML = `
+                        <span class="user-greeting">Привет, ${user.name || user.nick_name}</span>
+                        <button onclick="logout()" class="btn btn-login">Выйти</button>
+                    `;
+                } catch (error) {
+                    // Если токен невалидный, удаляем его
+                    localStorage.removeItem('token');
+                }
+            }
+        }
+
+        // Функция выхода из аккаунта
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.reload();
+        }
+
+        // Проверяем авторизацию при загрузке страницы
+        window.addEventListener('DOMContentLoaded', checkAuth);
+        */
+
         function toggleLike(element) {
             const icon = element.querySelector('i');
             const counter = element.querySelector('.counter');
